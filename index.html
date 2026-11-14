@@ -256,6 +256,7 @@ body.choosing #card,body.choosing #hist{display:none}
   var PREVIEW_PATH = ""; // Netlify בלבד: "/s" נותן לוואטסאפ כרטיס עם עטיפה ושם שיר. בגיטהאב משאירים ריק
   var HK = "slothspot.history", TK = "slothspot.theme";
   var APPLE_HOST = /^https:\/\/(music|itunes)\.apple\.com\//;
+  var SPOT_HOST = /^https:\/\/open\.spotify\.com\//;
   var IMG_HOST = /^https:\/\/[a-z0-9.-]*(mzstatic\.com|scdn\.co|spotifycdn\.com)\//i;
   var root = document.documentElement;
   var form = document.getElementById("form");
@@ -309,6 +310,17 @@ body.choosing #card,body.choosing #hist{display:none}
     var m = /(?:id)?(\d+)\/?$/.exec(u.pathname);
     return m ? { id: m[1], cc: cc.toLowerCase() } : null;
   }
+  function enc(t, a){
+    try { return btoa(unescape(encodeURIComponent(t + "\u0001" + a))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); } catch(e){ return ""; }
+  }
+  function dec(n){
+    try {
+      var b = n.replace(/-/g, "+").replace(/_/g, "/");
+      while (b.length % 4) b += "=";
+      var parts = decodeURIComponent(escape(atob(b))).split("\u0001");
+      return parts[0] ? { t: parts[0].slice(0, 200), a: (parts[1] || "").slice(0, 200) } : null;
+    } catch(e){ return null; }
+  }
   function spotPart(m){
     var sm = m.x && /open\.spotify\.com\/(track|album)\/([A-Za-z0-9]+)/.exec(m.sp || "");
     return sm ? "&s=" + (sm[1] === "album" ? "a" : "t") + sm[2] : "";
@@ -318,7 +330,7 @@ body.choosing #card,body.choosing #hist{display:none}
     if (!o) return "";
     var base = (PREVIEW_PATH ? o + PREVIEW_PATH : o + location.pathname) + "?";
     var p = m.ax === false ? null : parseApple(m.am || "");
-    if (p) return base + (m.k === "album" ? "b=" : "a=") + p.cc + p.id + spotPart(m);
+    if (p) return base + (m.k === "album" ? "b=" : "a=") + p.cc + p.id + spotPart(m) + (m.t ? "&n=" + enc(m.t, m.a || "") : "");
     return base + "q=" + encodeURIComponent(m.t) + spotPart(m);
   }
   function sharedParams(){
@@ -328,8 +340,23 @@ body.choosing #card,body.choosing #hist{display:none}
       var q = (p.get("q") || "").slice(0, 120);
       if (!a && !q) return null;
       var s = /^([ta])([A-Za-z0-9]{10,30})$/.exec(p.get("s") || "");
-      return { cc: a ? a[1].toLowerCase() : "", id: a ? a[2] : "", album: !!p.get("b"), q: q,
+      return { cc: a ? a[1].toLowerCase() : "", id: a ? a[2] : "", album: !!p.get("b"), q: q, n: dec(p.get("n") || ""),
         s: s ? { k: s[1] === "a" ? "album" : "track", id: s[2] } : null };
+    } catch(e){ return null; }
+  }
+
+  /* קישורים ארוכים מגרסאות קודמות (?t=...&am=...&sp=...) ממשיכים לעבוד, בלי שירות חיצוני */
+  function legacyShare(){
+    try {
+      var p = new URLSearchParams(location.search);
+      var t = p.get("t"), am = p.get("am") || "", sp = p.get("sp") || "", i = p.get("i") || "";
+      if (!t || (!am && !sp)) return null;
+      if (am && !APPLE_HOST.test(am)) am = "";
+      if (sp && !SPOT_HOST.test(sp)) sp = "";
+      if (!am && !sp) return null;
+      var a = (p.get("a") || "").slice(0, 200);
+      return { k: p.get("k") === "album" ? "album" : "song", t: t.slice(0, 200), a: a, i: IMG_HOST.test(i) ? i : "",
+        am: am || appleSearch(t + " " + a), sp: sp || spotifySearch(t, a), x: !!sp && p.get("x") === "1", ax: !!am };
     } catch(e){ return null; }
   }
 
@@ -579,19 +606,26 @@ body.choosing #card,body.choosing #hist{display:none}
     var my = ++seq;
     var spUrl = sh.s ? "https://open.spotify.com/" + sh.s.k + "/" + sh.s.id : "";
     var again = function(){ openShared(sh); };
+    var appleDirect = sh.id ? "https://music.apple.com/" + sh.cc + "/" + (sh.album ? "album" : "song") + "/" + sh.id : "";
+    var base = null;
+    if (sh.id && sh.n){
+      base = { k: sh.album ? "album" : "song", t: sh.n.t, a: sh.n.a, i: "", am: appleDirect,
+        sp: spUrl || spotifySearch(sh.n.t, sh.n.a), x: !!spUrl, ax: true };
+      show(base, true);
+    }
     var fb = function(){
-      if (!guard(my)) return;
+      if (!guard(my) || base) return;
       if (sh.id){
-        show({ k: sh.album ? "album" : "song", t: sh.q || "השיר ששלחו לך", a: "", i: "",
-          am: "https://music.apple.com/" + sh.cc + "/" + (sh.album ? "album" : "song") + "/" + sh.id,
+        show({ k: sh.album ? "album" : "song", t: sh.q || "השיר ששלחו לך", a: "", i: "", am: appleDirect,
           sp: spUrl, x: !!spUrl, ax: true, fb: !spUrl }, true, again);
       } else {
         show(fallbackModel(sh.q, spUrl ? { sp: spUrl, x: true } : {}), true, null);
       }
     };
     if (!sh.id){ fb(); return; }
-    loading("פותח את השיר…");
-    lookup(sh).then(function(it){
+    if (!base) loading("פותח את השיר…");
+    var attempt = function(){ return lookup(sh); };
+    attempt().catch(function(){ return new Promise(function(r){ setTimeout(r, 1200); }).then(attempt); }).then(function(it){
       if (!guard(my)) return;
       if (!it){ fb(); return; }
       var m = toModel(it, {});
@@ -690,9 +724,11 @@ body.choosing #card,body.choosing #hist{display:none}
 
   emptyCard();
   drawH();
-  var sh = sharedParams();
+  var legacy = legacyShare();
+  var sh = legacy ? null : sharedParams();
   var first = "";
-  if (sh){ openShared(sh); }
+  if (legacy){ show(legacy, true); }
+  else if (sh){ openShared(sh); }
   else {
     first = incoming();
     if (first){ input.value = first; run(first); }
