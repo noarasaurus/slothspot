@@ -4,12 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>sloth spot</title>
+<meta name="description" content="for friends who are too lazy to send the right link">
+<meta property="og:title" content="sloth spot">
+<meta property="og:description" content="for friends who are too lazy to send the right link">
+<meta name="theme-color" content="#e11d38">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="sloth spot">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* layout: one centered column. sloth mark + wordmark, search pill, result card with Apple and Spotify pills side by side, quiet history row */
+  /* layout: one centered column. sloth mark + wordmark, search pill, one standing song card with Apple and Spotify pills side by side, quiet history row, tips fold */
   --bg:#f5f5f7; --surface:#ffffff; --ink:#1d1d1f; --muted:#6e6e73; --line:rgba(0,0,0,.08);
   --apple:#e11d38; --apple-2:#ff5c7a; --spot:#1ed760; --spot-ink:#04210f;
   --glow-a:rgba(250,36,60,.16); --glow-b:rgba(30,215,96,.16);
@@ -42,9 +52,9 @@ body{
   -webkit-font-smoothing:antialiased;
   padding:max(28px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom));
 }
-main{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+main{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 
-header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-bottom:4px}
 .mark{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,var(--apple) 0%,var(--apple-2) 40%,var(--spot) 100%);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.14)}
 .mark svg{width:56px;height:56px;display:block}
 .word{margin:6px 0 0;font-size:36px;font-weight:800;letter-spacing:-.03em;line-height:1;direction:ltr}
@@ -57,8 +67,9 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
 .field input::placeholder{color:var(--muted)}
 .go{border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:inherit;font-weight:700;font-size:15px;padding:12px 20px;cursor:pointer;white-space:nowrap}
 .go:hover{opacity:.88}
-.go:focus-visible,.pill:focus-visible,.ghost:focus-visible,.tile:focus-visible,.link:focus-visible{outline:2px solid var(--apple);outline-offset:3px}
+.go:focus-visible,.pill:focus-visible,.ghost:focus-visible,.send:focus-visible,.tile:focus-visible,.link:focus-visible,summary:focus-visible{outline:2px solid var(--apple);outline-offset:3px}
 
+#status:empty{display:none}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:18px}
 .meta{display:flex;gap:16px;align-items:center}
 .art{width:96px;height:96px;flex:none;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,var(--apple),var(--apple-2) 45%,var(--spot));display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.18)}
@@ -66,11 +77,11 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
 .art svg{width:36px;height:36px;fill:#fff;opacity:.9}
 .txt{min-width:0}
 .tag{display:inline-block;font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:6px}
-.title{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:0;overflow-wrap:anywhere}
-.artist{margin:2px 0 0;color:var(--muted);font-size:16px;overflow-wrap:anywhere}
+.title{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:0;overflow-wrap:anywhere;line-height:1.2}
+.artist{margin:3px 0 0;color:var(--muted);font-size:16px;overflow-wrap:anywhere}
 
 .pills{display:flex;gap:10px;flex-wrap:wrap}
-.pill{flex:1 1 140px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:14px 12px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .12s ease;text-align:center}
+.pill{flex:1 1 140px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:14px 12px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .12s ease,opacity .2s ease;text-align:center}
 .pill:hover{transform:translateY(-1px)}
 .pill:active{transform:scale(.99)}
 .pill svg{width:22px;height:22px;flex:none}
@@ -78,16 +89,19 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
 .pill.apple svg{fill:#fff}
 .pill.spot{background:var(--spot);color:var(--spot-ink)}
 .pill.spot svg{fill:var(--spot-ink)}
+.pill.idle{opacity:.5;pointer-events:none}
 .pill.off{background:transparent;border:1px dashed var(--line);color:var(--muted);pointer-events:none;font-weight:500}
 .pill.off svg{fill:var(--muted)}
 .pill.off small{display:block;font-size:12px}
+.pill .pl{display:block;line-height:1.2}
+.pill .pl small{display:block;font-size:11px;font-weight:500;opacity:.7}
+.hint{margin:0 0 8px;font-size:14px;color:var(--muted);text-align:center}
 
 .actions{display:flex;gap:10px}
 .send{flex:1.4;border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:inherit;font-weight:700;font-size:16px;padding:14px 20px;cursor:pointer}
 .send:hover{opacity:.88}
 .ghost{flex:1;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;font:inherit;font-weight:700;font-size:15px;padding:14px 16px;cursor:pointer}
 .ghost:hover{background:var(--bg)}
-.send:focus-visible{outline:2px solid var(--apple);outline-offset:3px}
 .shareurl{direction:ltr;text-align:left;font-size:13px;color:var(--muted);background:var(--bg);border-radius:12px;padding:10px 12px;overflow-wrap:anywhere;user-select:all}
 
 .results{list-style:none;margin:0;padding:6px;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
@@ -113,11 +127,22 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
 .tile b{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tile span{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+.tips{font-size:14px;color:var(--muted)}
+.tips summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:center;gap:6px;padding:6px}
+.tips summary::-webkit-details-marker{display:none}
+.tips summary::after{content:"‹";display:inline-block;transform:rotate(-90deg);transition:transform .2s}
+.tips[open] summary::after{transform:rotate(90deg)}
+.tips .body{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px 20px;display:flex;flex-direction:column;gap:16px;line-height:1.55}
+.tips h2{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.tips ol{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:4px}
+.tips p{margin:0}
+.tips code{direction:ltr;unicode-bidi:isolate;display:inline-block;background:var(--bg);border-radius:8px;padding:2px 8px;font-size:13px;color:var(--ink);overflow-wrap:anywhere}
+
 .msg{border-radius:20px;padding:16px 18px;font-size:15px;line-height:1.5}
 .msg.err{background:rgba(225,29,56,.1);color:var(--apple)}
-.msg.load{color:var(--muted);text-align:center}
+.msg.load{color:var(--muted);text-align:center;padding:8px}
 [hidden]{display:none!important}
-@media (prefers-reduced-motion:reduce){.pill{transition:none}}
+@media (prefers-reduced-motion:reduce){.pill,.tips summary::after{transition:none}}
 </style>
 </head>
 <body>
@@ -144,36 +169,47 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
     <button class="go" type="submit">יאללה</button>
   </form>
 
-  <section id="out" aria-live="polite">
-    <div class="card" id="sample">
-      <div class="meta">
-        <div class="art"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12.2a3 3 0 1 1-2-2.8V7.6L11 8.8V18a3 3 0 1 1-2-2.8z"/></svg></div>
-        <div class="txt">
-          <span class="tag">דוגמה</span>
-          <p class="title">שם השיר</p>
-          <p class="artist">שם האמן</p>
-        </div>
-      </div>
-      <div class="pills">
-        <a class="pill apple" href="https://music.apple.com/" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12.2a3 3 0 1 1-2-2.8V7.6L11 8.8V18a3 3 0 1 1-2-2.8z"/></svg>אפל מיוזיק</a>
-        <a class="pill spot" href="https://open.spotify.com/" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21zm4.8 15.1a.8.8 0 0 1-1.1.3c-3-1.8-6.7-2.2-11.1-1.2a.8.8 0 1 1-.35-1.55c4.8-1.1 8.9-.6 12.2 1.4.4.2.5.7.35 1.05zm1.3-2.9a1 1 0 0 1-1.4.35c-3.4-2.1-8.5-2.7-12.5-1.5a1 1 0 1 1-.6-1.9c4.6-1.4 10.2-.7 14.1 1.7.5.3.6.9.4 1.35zm.1-3c-4-2.4-10.6-2.6-14.4-1.5a1.2 1.2 0 1 1-.7-2.3c4.4-1.3 11.7-1.1 16.3 1.7a1.2 1.2 0 0 1-1.2 2.1z"/></svg>ספוטיפיי</a>
-      </div>
-    </div>
-  </section>
+  <div id="status" aria-live="polite"></div>
+  <section id="card" aria-live="polite"></section>
 
   <section class="hist" id="hist" hidden aria-label="היסטוריה">
     <div class="hist-head"><span>הומרו לאחרונה</span><button class="link" id="clear" type="button">נקה</button></div>
     <div class="hist-row" id="histrow"></div>
   </section>
+
+  <details class="tips">
+    <summary>קיצור באייפון והתקנה</summary>
+    <div class="body">
+      <div>
+        <h2>קיצור באייפון, מכפתור השיתוף</h2>
+        <ol>
+          <li>פתחו את האפליקציה Shortcuts ולחצו על +.</li>
+          <li>הוסיפו את הפעולה Open URLs.</li>
+          <li>בשדה הכתובת הדביקו <code id="prefix">https://הכתובת-שלכם/?u=</code> והוסיפו אחריה את Shortcut Input. <button class="link" id="copyprefix" type="button">העתקת הכתובת</button></li>
+          <li>לחצו על i, הפעילו Show in Share Sheet, ובחרו שהקיצור מקבל רק URLs.</li>
+          <li>קראו לקיצור sloth spot.</li>
+        </ol>
+        <p>מעכשיו באפל מיוזיק או בספוטיפיי: שיתוף, sloth spot, והאתר נפתח עם שני הכפתורים.</p>
+      </div>
+      <div>
+        <h2>התקנה כאפליקציה</h2>
+        <p>באייפון: בספארי, שיתוף ואז הוספה למסך הבית. באנדרואיד: תפריט הדפדפן ואז התקנת אפליקציה. באנדרואיד האתר יופיע גם בתפריט השיתוף של אפל מיוזיק וספוטיפיי.</p>
+      </div>
+    </div>
+  </details>
 </main>
 
 <script>
 (function(){
-  var API = "https://api.song.link/v1-alpha.1/links?userCountry=IL&url=";
+  var PREVIEW_PATH = ""; // Netlify בלבד: "/s" נותן לוואטסאפ כרטיס עם עטיפה ושם שיר. בגיטהאב משאירים ריק
   var HK = "slothspot.history";
+  var APPLE_HOST = /^https:\/\/(music|itunes)\.apple\.com\//;
+  var SPOT_HOST = /^https:\/\/open\.spotify\.com\//;
+  var IMG_HOST = /^https:\/\/[a-z0-9.-]*(mzstatic\.com|scdn\.co|spotifycdn\.com)\//i;
   var form = document.getElementById("form");
   var input = document.getElementById("url");
-  var out = document.getElementById("out");
+  var status = document.getElementById("status");
+  var card = document.getElementById("card");
   var hist = document.getElementById("hist");
   var histrow = document.getElementById("histrow");
   var NOTE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12.2a3 3 0 1 1-2-2.8V7.6L11 8.8V18a3 3 0 1 1-2-2.8z"/></svg>';
@@ -183,36 +219,75 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function safeUrl(u){ return /^https:\/\//.test(u || "") ? u : ""; }
   function isMobile(){ return /Mobi|Android|iPhone|iPad/.test(navigator.userAgent); }
+  function realOrigin(){ return location.origin && location.origin !== "null" && /^https?:/.test(location.origin) ? location.origin : ""; }
+  function setStatus(html){ status.innerHTML = html; }
+  function showErr(t){ setStatus('<div class="msg err">' + esc(t) + '</div>'); }
+  function loading(t){ setStatus('<div class="msg load">' + esc(t) + '</div>'); }
+  function big(u){ return safeUrl((u || "").replace(/\d+x\d+(bb)?(?=\.)/, "600x600bb")); }
+  function spotifySearch(t, a){ return "https://open.spotify.com/search/" + encodeURIComponent((t + " " + a).trim()); }
 
-  function shareLink(orig){
-    var base = location.origin && location.origin !== "null" ? location.origin + location.pathname : "";
-    return base ? base + "?u=" + encodeURIComponent(orig) : "";
+  /* הקישור לשיתוף נושא את כל הפרטים בתוכו, לכן פתיחתו לא צריכה שום שירות חיצוני */
+  function shareLink(m){
+    var o = realOrigin();
+    if (!o) return "";
+    var q = "t=" + encodeURIComponent(m.t) + "&a=" + encodeURIComponent(m.a || "") + "&k=" + m.k +
+      "&am=" + encodeURIComponent(m.am || "") + "&sp=" + encodeURIComponent(m.sp || "") + "&x=" + (m.x ? 1 : 0) +
+      (m.i ? "&i=" + encodeURIComponent(m.i) : "");
+    return (PREVIEW_PATH ? o + PREVIEW_PATH : o + location.pathname) + "?" + q;
   }
-  function show(html){ out.innerHTML = html; }
-  function showErr(t){ show('<div class="msg err">' + esc(t) + '</div>'); }
+  function fromShare(){
+    try {
+      var p = new URLSearchParams(location.search);
+      var t = p.get("t"), am = p.get("am") || "", sp = p.get("sp") || "", i = p.get("i") || "";
+      if (!t || (!am && !sp)) return null;
+      if (am && !APPLE_HOST.test(am)) am = "";
+      if (sp && !SPOT_HOST.test(sp)) sp = "";
+      if (!am && !sp) return null;
+      return { k: p.get("k") === "album" ? "album" : "song", t: t.slice(0, 200), a: (p.get("a") || "").slice(0, 200),
+        i: IMG_HOST.test(i) ? i : "", am: am, sp: sp, x: p.get("x") === "1" };
+    } catch(e){ return null; }
+  }
+
+  /* הכרטיס הקבוע: ריק עד שיש שיר, ואז מתמלא */
+  function metaHTML(artHTML, tag, title, artist){
+    return '<div class="meta"><div class="art">' + artHTML + '</div><div class="txt">' +
+      (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') +
+      '<p class="title">' + esc(title) + '</p><p class="artist">' + esc(artist) + '</p></div></div>';
+  }
+  function emptyCard(){
+    card.innerHTML = '<div class="card empty">' + metaHTML(NOTE, "", "שם השיר", "שם האמן") +
+      '<div class="pills"><span class="pill apple idle" aria-disabled="true">' + NOTE + 'אפל מיוזיק</span>' +
+      '<span class="pill spot idle" aria-disabled="true">' + SPOT + 'ספוטיפיי</span></div></div>';
+  }
+  function pill(kind, url, label, icon, hint){
+    var u = safeUrl(url);
+    if (!u) return '<span class="pill ' + kind + ' off">' + icon + '<span>' + esc(label) + '<small>לא נמצא</small></span></span>';
+    return '<a class="pill ' + kind + '" href="' + esc(u) + '" rel="noopener">' + icon +
+      (hint ? '<span class="pl">' + esc(label) + '<small>' + esc(hint) + '</small></span>' : esc(label)) + '</a>';
+  }
 
   /* היסטוריה קטנה, נשמרת רק במכשיר הזה */
   function loadH(){ try { return JSON.parse(localStorage.getItem(HK) || "[]"); } catch(e){ return []; } }
-  function saveH(item){
+  function saveH(m){
     try {
-      var h = loadH().filter(function(x){ return !(x.t === item.t && x.a === item.a); });
-      h.unshift(item);
+      var h = loadH().filter(function(x){ return !(x.t === m.t && x.a === m.a); });
+      h.unshift(m);
       localStorage.setItem(HK, JSON.stringify(h.slice(0, 10)));
     } catch(e){}
     drawH();
   }
   function drawH(){
-    var h = loadH();
+    var h = loadH().filter(function(x){ return x && x.t && (x.am || x.sp); });
     if (!h.length){ hist.hidden = true; return; }
     hist.hidden = false;
     histrow.innerHTML = h.map(function(x, i){
-      var a = safeUrl(x.i);
+      var a = IMG_HOST.test(x.i || "") ? x.i : "";
       return '<button class="tile" type="button" data-h="' + i + '"><span class="th">' + (a ? '<img src="' + esc(a) + '" alt="">' : "") + '</span><b>' + esc(x.t) + '</b><span>' + esc(x.a) + '</span></button>';
     }).join("");
     histrow.querySelectorAll("button[data-h]").forEach(function(b){
       b.addEventListener("click", function(){
         var x = h[+b.getAttribute("data-h")];
-        if (x && x.u){ input.value = x.u; run(x.u); window.scrollTo({ top: 0, behavior: "smooth" }); }
+        if (x){ input.value = ""; setStatus(""); show(x); window.scrollTo({ top: 0, behavior: "smooth" }); }
       });
     });
   }
@@ -221,37 +296,25 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
     drawH();
   });
 
-  function pill(kind, url, label, icon){
-    var u = safeUrl(url);
-    if (!u) return '<span class="pill ' + kind + ' off">' + icon + '<span>' + esc(label) + '<small>לא נמצא</small></span></span>';
-    return '<a class="pill ' + kind + '" href="' + esc(u) + '" rel="noopener">' + icon + esc(label) + '</a>';
-  }
-
-  function render(data, orig){
-    var ent = (data.entitiesByUniqueId || {})[data.entityUniqueId] || {};
-    var links = data.linksByPlatform || {};
-    var art = safeUrl(ent.thumbnailUrl);
-    var kind = ent.type === "album" ? "אלבום" : "שיר";
-    var share = shareLink(orig);
-    var html = '<div class="card">' +
-      '<div class="meta"><div class="art">' + (art ? '<img src="' + esc(art) + '" alt="" id="artimg">' : NOTE) + '</div>' +
-      '<div class="txt"><span class="tag">' + kind + '</span><p class="title">' + esc(ent.title || "") + '</p><p class="artist">' + esc(ent.artistName || "") + '</p></div></div>' +
+  function show(m, skipSave){
+    var link = shareLink(m) || m.am || m.sp;
+    var label = m.t + (m.a ? " – " + m.a : "");
+    setStatus("");
+    card.innerHTML = '<div class="card">' +
+      metaHTML(m.i ? '<img src="' + esc(m.i) + '" alt="" id="artimg">' : NOTE, m.k === "album" ? "אלבום" : "שיר", m.t, m.a) +
       '<div class="pills">' +
-        pill("apple", (links.appleMusic || {}).url, "אפל מיוזיק", NOTE) +
-        pill("spot", (links.spotify || {}).url, "ספוטיפיי", SPOT) +
+        pill("apple", m.am, "אפל מיוזיק", NOTE) +
+        pill("spot", m.sp, "ספוטיפיי", SPOT, m.x ? "" : "נפתח בחיפוש") +
       '</div>' +
       '<div class="actions"><button class="send" id="send" type="button">שלחי לחברה</button>' +
       '<button class="ghost" id="copy" type="button">העתקת קישור</button></div>' +
     '</div>';
-    show(html);
     var img = document.getElementById("artimg");
     if (img) img.addEventListener("error", function(){ img.parentNode.innerHTML = NOTE; });
-    var link = share || orig;
-    var label = (ent.title || "") + (ent.artistName ? " – " + ent.artistName : "");
     document.getElementById("send").addEventListener("click", function(){ sendToFriend(label, link); });
     var btn = document.getElementById("copy");
     btn.addEventListener("click", function(){ copy(link, btn); });
-    if (ent.title) saveH({ t: ent.title, a: ent.artistName || "", i: art, u: orig });
+    if (!skipSave) saveH(m);
   }
 
   function sendToFriend(label, link){
@@ -259,83 +322,136 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
       navigator.share({ title: label, text: label, url: link }).catch(function(){});
       return;
     }
-    var w = "https://wa.me/?text=" + encodeURIComponent(label + "\n" + link);
     var a = document.createElement("a");
-    a.href = w; a.target = "_blank"; a.rel = "noopener";
+    a.href = "https://wa.me/?text=" + encodeURIComponent(label + "\n" + link);
+    a.target = "_blank"; a.rel = "noopener";
     document.body.appendChild(a); a.click(); a.remove();
   }
 
   function copy(text, btn){
-    var reset = function(){ setTimeout(function(){ btn.textContent = "העתקת קישור"; }, 1800); };
+    var orig = btn.textContent;
+    var reset = function(){ setTimeout(function(){ btn.textContent = orig; }, 1800); };
     var done = function(){ btn.textContent = "הועתק"; reset(); };
     var fallback = function(){
       var d = document.createElement("div");
       d.className = "shareurl"; d.textContent = text;
-      btn.parentNode.parentNode.appendChild(d);
+      (btn.closest(".card") || btn.parentNode).appendChild(d);
       var r = document.createRange(); r.selectNodeContents(d);
       var s = getSelection(); s.removeAllRanges(); s.addRange(r);
-      btn.textContent = "סמנו והעתיקו";
+      btn.textContent = "סמנו והעתיקו"; reset();
     };
     if (navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(done, fallback);
     } else { fallback(); }
   }
 
+  /* iTunes: חיפוש ושליפה לפי מזהה. חינמי, בלי מפתח, ופתוח לדפדפן */
+  function itunes(path){
+    return fetch("https://itunes.apple.com/" + path).then(function(r){
+      if (!r.ok) throw new Error("itunes");
+      return r.json();
+    });
+  }
+  function normalize(r){
+    var album = r.wrapperType === "collection";
+    return { k: album ? "album" : "song", t: r.trackName || r.collectionName || "", a: r.artistName || "",
+      i: big(r.artworkUrl100), url: r.trackViewUrl || r.collectionViewUrl || "" };
+  }
+  function toModel(it, extra){
+    var m = { k: it.k, t: it.t, a: it.a, i: it.i, am: it.url, sp: spotifySearch(it.t, it.a), x: false };
+    for (var key in extra) m[key] = extra[key];
+    return m;
+  }
+  function chooser(items, hint, onPick){
+    var html = '<p class="hint">' + esc(hint) + '</p><ul class="results">';
+    items.forEach(function(t, i){
+      html += '<li><button type="button" data-i="' + i + '"><span class="thumb">' + (t.i ? '<img src="' + esc(t.i) + '" alt="">' : "") + '</span>' +
+              '<span class="rt"><b>' + esc(t.t) + '</b><span>' + esc(t.a) + '</span></span></button></li>';
+    });
+    setStatus(html + "</ul>");
+    status.querySelectorAll("button[data-i]").forEach(function(b){
+      b.addEventListener("click", function(){ onPick(items[+b.getAttribute("data-i")]); });
+    });
+  }
+
   var seq = 0;
+  function guard(my){ return my === seq; }
+
+  /* חיפוש לפי שם */
+  function search(term){
+    var my = ++seq;
+    loading("מחפש…");
+    itunes("search?media=music&entity=song&limit=6&country=IL&term=" + encodeURIComponent(term))
+      .then(function(d){
+        if (!guard(my)) return;
+        var items = (d.results || []).map(normalize).filter(function(x){ return x.url; });
+        if (!items.length){ showErr("לא נמצא שיר בשם הזה. נסו להוסיף את שם האמן."); return; }
+        chooser(items, "", function(it){ show(toModel(it, {})); });
+      })
+      .catch(function(){ if (guard(my)) showErr("החיפוש לא זמין כרגע. נסו שוב עוד רגע."); });
+  }
+
+  /* קישור מאפל: מזהים את השיר, שולפים אותו, וספוטיפיי נפתח בחיפוש של אותו שיר */
+  function parseApple(url){
+    var u; try { u = new URL(url); } catch(e){ return null; }
+    var cc = (/^\/([a-z]{2})\//i.exec(u.pathname) || [])[1] || "us";
+    var i = u.searchParams.get("i");
+    if (i && /^\d+$/.test(i)) return { id: i, cc: cc };
+    var m = /(?:id)?(\d+)\/?$/.exec(u.pathname);
+    return m ? { id: m[1], cc: cc } : null;
+  }
+  function fromApple(url, my){
+    var p = parseApple(url);
+    if (!p){ showErr("לא זיהיתי שיר בקישור הזה. נסו לחפש בשם."); return; }
+    var pick = function(d){ return (d.results || [])[0]; };
+    itunes("lookup?id=" + p.id + "&country=" + p.cc)
+      .then(function(d){ return pick(d) ? d : (p.cc !== "us" ? itunes("lookup?id=" + p.id + "&country=us") : d); })
+      .then(function(d){
+        if (!guard(my)) return;
+        var r = pick(d);
+        if (!r || (r.wrapperType !== "track" && r.wrapperType !== "collection")){ showErr("לא מצאתי שיר או אלבום בקישור הזה. נסו לחפש בשם."); return; }
+        show(toModel(normalize(r), {}));
+      })
+      .catch(function(){ if (guard(my)) showErr("לא הצלחתי לקרוא את הקישור. נסו לחפש את השיר בשם."); });
+  }
+
+  /* קישור מספוטיפיי: שולפים את שם השיר, מוצאים באפל, והמשתמשת בוחרת את הגרסה הנכונה */
+  function fromSpotify(url, my){
+    var m = /open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album)\/([A-Za-z0-9]+)/.exec(url);
+    if (!m){ showErr("אפשר להמיר רק שירים ואלבומים מספוטיפיי."); return; }
+    var kind = m[1] === "album" ? "album" : "song";
+    var canonical = "https://open.spotify.com/" + m[1] + "/" + m[2];
+    fetch("https://open.spotify.com/oembed?url=" + encodeURIComponent(canonical))
+      .then(function(r){ if (!r.ok) throw new Error("oembed"); return r.json(); })
+      .then(function(o){
+        if (!guard(my)) return;
+        var title = o.title || "", thumb = IMG_HOST.test(o.thumbnail_url || "") ? o.thumbnail_url : "";
+        return itunes("search?media=music&entity=" + kind + "&limit=6&country=IL&term=" + encodeURIComponent(title))
+          .then(function(d){
+            if (!guard(my)) return;
+            var items = (d.results || []).map(normalize).filter(function(x){ return x.url; });
+            if (!items.length){ showErr("לא מצאתי את השיר באפל מיוזיק. נסו לחפש בשם."); return; }
+            chooser(items, "בחרו את הגרסה הנכונה", function(it){
+              show({ k: it.k, t: it.t, a: it.a, i: it.i || thumb, am: it.url, sp: canonical, x: true });
+            });
+          });
+      })
+      .catch(function(){ if (guard(my)) showErr("לא הצלחתי לקרוא את הקישור מספוטיפיי. נסו לחפש את השיר בשם."); });
+  }
+
   function run(raw){
     var url = (raw || "").trim();
     if (!url) return;
     if (!/^https?:\/\//i.test(url)) url = "https://" + url;
     var my = ++seq;
-    show('<div class="msg load">מחפש את השיר…</div>');
-    var ctl = ("AbortController" in window) ? new AbortController() : null;
-    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 15000);
-    fetch(API + encodeURIComponent(url), ctl ? { signal: ctl.signal } : {})
-      .then(function(r){
-        if (r.status === 429) throw new Error("rate");
-        if (!r.ok) throw new Error("notfound");
-        return r.json();
-      })
-      .then(function(d){ if (my === seq) render(d, url); })
-      .catch(function(e){
-        if (my !== seq) return;
-        if (e.message === "rate") showErr("יותר מדי בקשות. נסו שוב בעוד דקה.");
-        else if (e.message === "notfound") showErr("לא מצאתי את השיר. בדקו שהקישור הוא לשיר או אלבום באפל מיוזיק או בספוטיפיי.");
-        else showErr("אין חיבור לשירות ההמרה. נסו שוב בעוד רגע.");
-      })
-      .then(function(){ clearTimeout(timer); });
+    loading("מחפש את השיר…");
+    if (/spotify\.link\//i.test(url)){ showErr("קישור קצר של ספוטיפיי (spotify.link) לא נתמך. פתחו את השיר והעתיקו את הקישור המלא, או חפשו בשם."); return; }
+    if (/^https:\/\/(music|itunes)\.apple\.com\//i.test(url)) fromApple(url, my);
+    else if (/^https:\/\/open\.spotify\.com\//i.test(url)) fromSpotify(url, my);
+    else showErr("הקישור צריך להיות משיר או אלבום באפל מיוזיק או בספוטיפיי.");
   }
 
-  var isLink = function(s){ return /^https?:\/\//i.test(s) || /(music\.apple|spotify|itunes\.apple|song\.link)/i.test(s); };
-
-  /* חיפוש לפי שם: iTunes Search (חינמי, בלי מפתח), ואז Odesli משלים את ספוטיפיי */
-  var sseq = 0, stimer = null;
-  function search(term){
-    var my = ++sseq;
-    show('<div class="msg load">מחפש…</div>');
-    fetch("https://itunes.apple.com/search?media=music&entity=song&limit=6&country=IL&term=" + encodeURIComponent(term))
-      .then(function(r){ if (!r.ok) throw new Error("x"); return r.json(); })
-      .then(function(d){
-        if (my !== sseq) return;
-        var rs = (d.results || []).filter(function(t){ return t.trackViewUrl; });
-        if (!rs.length){ showErr("לא נמצא שיר בשם הזה. נסו להוסיף את שם האמן."); return; }
-        var html = '<ul class="results">';
-        rs.forEach(function(t, i){
-          var a = safeUrl((t.artworkUrl100 || "").replace("100x100", "200x200"));
-          html += '<li><button type="button" data-i="' + i + '"><span class="thumb">' + (a ? '<img src="' + esc(a) + '" alt="">' : "") + '</span>' +
-                  '<span class="rt"><b>' + esc(t.trackName) + '</b><span>' + esc(t.artistName) + '</span></span></button></li>';
-        });
-        html += "</ul>";
-        show(html);
-        out.querySelectorAll("button[data-i]").forEach(function(b){
-          b.addEventListener("click", function(){
-            var url = rs[+b.getAttribute("data-i")].trackViewUrl;
-            input.value = url; run(url);
-          });
-        });
-      })
-      .catch(function(){ if (my === sseq) showErr("החיפוש לא זמין כרגע. נסו שוב או הדביקו קישור."); });
-  }
+  var isLink = function(s){ return /^https?:\/\//i.test(s) || /(music\.apple|spotify|itunes\.apple)/i.test(s); };
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -343,21 +459,49 @@ header{display:flex;flex-direction:column;align-items:center;gap:10px;text-align
     if (!v) return;
     if (isLink(v)) run(v); else search(v);
   });
+  var stimer = null;
   input.addEventListener("input", function(){
     clearTimeout(stimer);
     var v = input.value.trim();
-    if (!v || isLink(v) || v.length < 2) return;
+    if (!v){ seq++; setStatus(""); return; }
+    if (isLink(v) || v.length < 2) return;
     stimer = setTimeout(function(){ search(v); }, 400);
   });
   input.addEventListener("paste", function(){
     setTimeout(function(){ if (isLink(input.value.trim())) { clearTimeout(stimer); run(input.value); } }, 0);
   });
 
-  drawH();
-  var q = /[?&]u=([^&]+)/.exec(location.search);
-  if (q){
-    try { var u0 = decodeURIComponent(q[1]); input.value = u0; run(u0); } catch(e){}
+  /* מה נכנס לאתר: קישור שיתוף, קישור מהקיצור באייפון (?u=), או שיתוף מאנדרואיד אחרי התקנה */
+  function incoming(){
+    var s = location.search, m = /[?&]u=(.+)$/.exec(s);
+    if (m){ try { return decodeURIComponent(m[1]); } catch(e){ return m[1]; } }
+    try {
+      var p = new URLSearchParams(s);
+      var t = (p.get("url") || "") + " " + (p.get("text") || "") + " " + (p.get("title") || "");
+      var f = /https?:\/\/\S+/.exec(t);
+      if (f) return f[0];
+    } catch(e){}
+    return "";
   }
+
+  var prefix = realOrigin() ? realOrigin() + location.pathname + "?u=" : "";
+  if (prefix){
+    document.getElementById("prefix").textContent = prefix;
+    document.getElementById("copyprefix").addEventListener("click", function(){ copy(prefix, this); });
+  } else {
+    document.getElementById("copyprefix").hidden = true;
+  }
+
+  emptyCard();
+  drawH();
+  var shared = fromShare();
+  if (shared){ show(shared, true); }
+  else {
+    var first = incoming();
+    if (first){ input.value = first; run(first); }
+  }
+
+  try { if ("serviceWorker" in navigator && realOrigin()) navigator.serviceWorker.register("sw.js").catch(function(){}); } catch(e){}
 })();
 </script>
 </body>
