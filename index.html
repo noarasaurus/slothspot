@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>sloth spot</title>
 <meta name="description" content="for friends who are too lazy to send the right link">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sloth spot">
 <meta property="og:title" content="sloth spot">
-<meta property="og:description" content="for friends who are too lazy to send the right link">
+<meta property="og:description" content="קיבלת שיר? פתחי אותו באפל מיוזיק או בספוטיפיי">
+<meta property="og:url" content="https://noarasaurus.github.io/slothspot/">
+<meta property="og:image" content="https://noarasaurus.github.io/slothspot/icon-512.png">
+<meta name="twitter:card" content="summary">
 <meta id="themecolor" name="theme-color" content="#f5f5f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -58,11 +63,11 @@ main{width:100%;max-width:460px;margin:auto;display:flex;flex-direction:column;g
 :root[data-theme="dark"] #theme .moon{display:none}
 
 header{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
-.mark{width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,var(--apple) 0%,var(--apple-2) 40%,var(--spot) 100%);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.14)}
-.mark svg{width:48px;height:48px;display:block}
-.word{margin:4px 0 0;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1;direction:ltr}
+.mark{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,var(--apple) 0%,var(--apple-2) 40%,var(--spot) 100%);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.mark svg{width:56px;height:56px;display:block}
+.word{margin:4px 0 0;font-size:36px;font-weight:800;letter-spacing:-.03em;line-height:1;direction:ltr}
 .word .spot{background:linear-gradient(90deg,var(--apple),var(--spot));-webkit-background-clip:text;background-clip:text;color:transparent}
-.tagline{margin:0;color:var(--muted);font-size:13px;max-width:300px;text-wrap:balance;direction:ltr}
+.tagline{margin:0;color:var(--muted);font-size:15px;max-width:340px;text-wrap:balance;direction:ltr}
 
 .field{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 8px;box-shadow:var(--shadow)}
 .field:focus-within{outline:2px solid var(--apple);outline-offset:2px}
@@ -93,7 +98,12 @@ body.choosing #card,body.choosing #hist{display:none}
 .pill.apple svg{fill:#fff}
 .pill.spot{background:var(--spot);color:var(--spot-ink)}
 .pill.spot svg{fill:var(--spot-ink)}
-.pill.idle{opacity:.5;pointer-events:none}
+.pill.idle{opacity:.38;pointer-events:none}
+.card.empty .title{color:var(--muted);opacity:.55}
+.card.empty .artist{opacity:.55}
+.card.empty .art{opacity:.55;box-shadow:none}
+.sp-arcs{fill:none;stroke:var(--spot);stroke-linecap:round}
+.pill.off .sp-arcs{stroke:var(--surface)}
 .pill.off{background:transparent;border:1px dashed var(--line);color:var(--muted);pointer-events:none;font-weight:500}
 .pill.off svg{fill:var(--muted)}
 .pill.off small{display:block;font-size:12px}
@@ -113,10 +123,10 @@ body.choosing #card,body.choosing #hist{display:none}
   .shell{padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(12px,env(safe-area-inset-bottom))}
   main{gap:12px}
   header{gap:4px}
-  .mark{width:44px;height:44px;border-radius:13px}
-  .mark svg{width:36px;height:36px}
-  .word{font-size:26px;margin-top:2px}
-  .tagline{font-size:12px}
+  .mark{width:52px;height:52px;border-radius:15px}
+  .mark svg{width:42px;height:42px}
+  .word{font-size:30px;margin-top:2px}
+  .tagline{font-size:13px}
   .field input{padding:9px 14px}
   .go{padding:9px 18px}
   .card{padding:12px;gap:10px;border-radius:22px}
@@ -127,6 +137,12 @@ body.choosing #card,body.choosing #hist{display:none}
   .fbnote{font-size:12px}
   body.hascard .hist{display:none}
 }
+.fieldwrap{position:relative}
+.tip{position:fixed;top:calc(max(14px,env(safe-area-inset-top)) + 54px);left:16px;right:16px;max-width:428px;margin:0 auto;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.18);padding:14px 16px;padding-inline-end:46px}
+.tip p{margin:0;font-size:14px;line-height:1.5;color:var(--ink);text-wrap:balance}
+.tipx{position:absolute;top:8px;inset-inline-end:8px;width:28px;height:28px;border-radius:50%;border:0;background:var(--bg);color:var(--muted);font:inherit;font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.tipx:hover{color:var(--ink)}
+.tipx:focus-visible{outline:2px solid var(--apple);outline-offset:2px}
 .hint{margin:0 0 8px;font-size:14px;color:var(--muted);text-align:center}
 .results{list-style:none;margin:0;padding:6px;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
 .results button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:18px;cursor:pointer;width:100%}
@@ -173,6 +189,10 @@ body.choosing #card,body.choosing #hist{display:none}
   <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
 </button>
 
+<div class="tip" id="tip" role="note" hidden>
+  <p>קיבלת שיר מאפל מיוזיק ואת בספוטיפיי? או להפך? הדביקי קישור ונעזור לך למצוא אותו באפליקציה שלך.</p>
+  <button class="tipx" id="tipx" type="button" aria-label="סגירה">×</button>
+</div>
 <div class="shell">
 <main>
   <header>
@@ -192,10 +212,12 @@ body.choosing #card,body.choosing #hist{display:none}
     <p class="tagline" lang="en">for friends who are too lazy to send the right link</p>
   </header>
 
-  <form id="form" class="field" autocomplete="off">
-    <input id="url" type="text" inputmode="search" enterkeyhint="search" placeholder="שם שיר או קישור" aria-label="חיפוש שיר או קישור" spellcheck="false">
+  <div class="fieldwrap">
+    <form id="form" class="field" autocomplete="off">
+    <input id="url" type="text" inputmode="search" enterkeyhint="search" placeholder="שם שיר או קישור" aria-label="חיפוש שיר או קישור" spellcheck="false" autocapitalize="off" autocorrect="off">
     <button class="go" type="submit">יאללה</button>
   </form>
+  </div>
 
   <div id="status" aria-live="polite"></div>
   <section id="card" aria-live="polite"></section>
@@ -242,7 +264,7 @@ body.choosing #card,body.choosing #hist{display:none}
   var hist = document.getElementById("hist");
   var histrow = document.getElementById("histrow");
   var NOTE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12.2a3 3 0 1 1-2-2.8V7.6L11 8.8V18a3 3 0 1 1-2-2.8z"/></svg>';
-  var SPOT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21zm4.8 15.1a.8.8 0 0 1-1.1.3c-3-1.8-6.7-2.2-11.1-1.2a.8.8 0 1 1-.35-1.55c4.8-1.1 8.9-.6 12.2 1.4.4.2.5.7.35 1.05zm1.3-2.9a1 1 0 0 1-1.4.35c-3.4-2.1-8.5-2.7-12.5-1.5a1 1 0 1 1-.6-1.9c4.6-1.4 10.2-.7 14.1 1.7.5.3.6.9.4 1.35zm.1-3c-4-2.4-10.6-2.6-14.4-1.5a1.2 1.2 0 1 1-.7-2.3c4.4-1.3 11.7-1.1 16.3 1.7a1.2 1.2 0 0 1-1.2 2.1z"/></svg>';
+  var SPOT = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11"/><g class="sp-arcs"><path d="M5.8 8.6c4.2-1.2 8.6-.8 12.4 1.3" stroke-width="1.9"/><path d="M6.9 11.7c3.3-.9 6.9-.6 10.2 1.1" stroke-width="1.6"/><path d="M7.9 14.6c2.7-.7 5.5-.4 8.2.9" stroke-width="1.3"/></g></svg>';
 
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -363,7 +385,8 @@ body.choosing #card,body.choosing #hist{display:none}
     var link = shareLink(m) || m.am || m.sp;
     var label = m.t + (m.a ? " – " + m.a : "");
     var tag = (m.fb && m.ax === false && !m.x) ? "חיפוש" : (m.k === "album" ? "אלבום" : "שיר");
-    var note = m.fb ? '<p class="fbnote">לא מצאתי את השיר המדויק (אולי אפל עמוסה), אז מה שמסומן "נפתח בחיפוש" מחפש את השם.' +
+    var note = m.fb ? '<p class="fbnote">לא מצאתי את השיר המדויק (אולי אפל עמוסה). מה שמסומן "נפתח בחיפוש" מחפש את השם, ואפשר גם להעתיק אותו ולהדביק בחיפוש של אפל.' +
+      ' <button class="link" id="copyname" type="button">העתקת שם השיר</button>' +
       (retry ? ' <button class="link" id="retry" type="button">נסי שוב</button>' : '') + '</p>' : '';
     setStatus("");
     document.body.classList.add("hascard");
@@ -381,18 +404,21 @@ body.choosing #card,body.choosing #hist{display:none}
     document.getElementById("send").addEventListener("click", function(){ sendToFriend(label, link); });
     var btn = document.getElementById("copy");
     btn.addEventListener("click", function(){ copy(link, btn); });
+    var cn = document.getElementById("copyname");
+    if (cn) cn.addEventListener("click", function(){ copy((m.t + " " + (m.a || "")).trim(), cn); });
     var rb = document.getElementById("retry");
     if (rb && retry) rb.addEventListener("click", retry);
     if (!skipSave && !m.fb) saveH(m);
   }
 
   function sendToFriend(label, link){
+    var msg = "אל תהיי עצלנית, שלחתי לך שיר עם קישור גם לספוטיפיי וגם לאפל\n" + label;
     if (navigator.share && isMobile()){
-      navigator.share({ title: label, text: label, url: link }).catch(function(){});
+      navigator.share({ title: label, text: msg, url: link }).catch(function(){});
       return;
     }
     var a = document.createElement("a");
-    a.href = "https://wa.me/?text=" + encodeURIComponent(label + "\n" + link);
+    a.href = "https://wa.me/?text=" + encodeURIComponent(msg + "\n" + link);
     a.target = "_blank"; a.rel = "noopener";
     document.body.appendChild(a); a.click(); a.remove();
   }
@@ -472,6 +498,15 @@ body.choosing #card,body.choosing #hist{display:none}
     });
   }
 
+  var TIPK = "slothspot.tip";
+  var tip = document.getElementById("tip");
+  function tipSeen(){ try { return localStorage.getItem(TIPK) === "1"; } catch(e){ return false; } }
+  function hideTip(persist){
+    tip.hidden = true;
+    if (persist){ try { localStorage.setItem(TIPK, "1"); } catch(e){} }
+  }
+  document.getElementById("tipx").addEventListener("click", function(){ hideTip(true); });
+
   var seq = 0;
   function guard(my){ return my === seq; }
   function appleSearch(term){ return "https://music.apple.com/il/search?term=" + encodeURIComponent(term); }
@@ -484,6 +519,7 @@ body.choosing #card,body.choosing #hist{display:none}
 
   /* חיפוש לפי שם: קודם הקטלוג הישראלי, ואם אין תוצאות גם הכללי. אם נכשל, כרטיס גיבוי עם קישורי חיפוש */
   function search(term){
+    hideTip(true);
     var my = ++seq;
     loading("מחפש…");
     var q = "search?media=music&entity=song&limit=5&term=" + encodeURIComponent(term);
@@ -590,6 +626,7 @@ body.choosing #card,body.choosing #hist{display:none}
   function run(raw){
     var url = (raw || "").trim();
     if (!url) return;
+    hideTip(true);
     if (!/^https?:\/\//i.test(url)) url = "https://" + url;
     var my = ++seq;
     loading("מחפש את השיר…");
@@ -601,13 +638,24 @@ body.choosing #card,body.choosing #hist{display:none}
 
   var isLink = function(s){ return /^https?:\/\//i.test(s) || /(music\.apple|spotify|itunes\.apple)/i.test(s); };
 
-  /* חיפוש בלחיצה על Enter או "יאללה". חיפוש תוך כדי הקלדה בוטל, כי הוא הציף את אפל בבקשות */
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
+  /* חיפוש אוטומטי בלחיצה על אנטר, על כפתור החיפוש או האישור במקלדת, או על "יאללה" */
+  var lastGo = { v: "", t: 0 };
+  function go(){
     var v = input.value.trim();
     if (!v) return;
+    var now = Date.now();
+    if (v === lastGo.v && now - lastGo.t < 1500) return;
+    lastGo = { v: v, t: now };
     if (isLink(v)) run(v); else search(v);
+  }
+  form.addEventListener("submit", function(e){ e.preventDefault(); go(); });
+  input.addEventListener("keydown", function(e){
+    if ((e.key === "Enter" || e.keyCode === 13) && !e.isComposing){
+      e.preventDefault(); go();
+      if (isMobile()) input.blur();
+    }
   });
+  input.addEventListener("change", go);
   input.addEventListener("input", function(){
     if (!input.value.trim()){ seq++; setStatus(""); }
   });
@@ -639,11 +687,13 @@ body.choosing #card,body.choosing #hist{display:none}
   emptyCard();
   drawH();
   var sh = sharedParams();
+  var first = "";
   if (sh){ openShared(sh); }
   else {
-    var first = incoming();
+    first = incoming();
     if (first){ input.value = first; run(first); }
   }
+  if (!sh && !first && !tipSeen()) tip.hidden = false;
 
   try { if ("serviceWorker" in navigator && realOrigin()) navigator.serviceWorker.register("sw.js").catch(function(){}); } catch(e){}
 })();
