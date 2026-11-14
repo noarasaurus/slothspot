@@ -63,11 +63,11 @@ main{width:100%;max-width:460px;margin:auto;display:flex;flex-direction:column;g
 :root[data-theme="dark"] #theme .moon{display:none}
 
 header{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
-.mark{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,var(--apple) 0%,var(--apple-2) 40%,var(--spot) 100%);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.14)}
-.mark svg{width:56px;height:56px;display:block}
-.word{margin:4px 0 0;font-size:36px;font-weight:800;letter-spacing:-.03em;line-height:1;direction:ltr}
+.mark{width:92px;height:92px;border-radius:26px;background:linear-gradient(135deg,var(--apple) 0%,var(--apple-2) 40%,var(--spot) 100%);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.mark svg{width:76px;height:76px;display:block}
+.word{margin:6px 0 0;font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1;direction:ltr}
 .word .spot{background:linear-gradient(90deg,var(--apple),var(--spot));-webkit-background-clip:text;background-clip:text;color:transparent}
-.tagline{margin:0;color:var(--muted);font-size:15px;max-width:340px;text-wrap:balance;direction:ltr}
+.tagline{margin:0;color:var(--ink);opacity:.82;font-size:17px;font-weight:600;line-height:1.35;max-width:340px;text-wrap:balance;direction:ltr}
 
 .field{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 8px;box-shadow:var(--shadow)}
 .field:focus-within{outline:2px solid var(--apple);outline-offset:2px}
@@ -119,14 +119,15 @@ body.choosing #card,body.choosing #hist{display:none}
 
 .fbnote{margin:0;font-size:13px;line-height:1.5;color:var(--muted)}
 .title,.artist,.tile b,.tile span,.results .rt b,.results .rt span{unicode-bidi:plaintext;text-align:start}
-@media (max-height:700px){
+@media (max-height:760px){
+  body.tipon .hist{display:none}
   .shell{padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(12px,env(safe-area-inset-bottom))}
   main{gap:12px}
   header{gap:4px}
-  .mark{width:52px;height:52px;border-radius:15px}
-  .mark svg{width:42px;height:42px}
-  .word{font-size:30px;margin-top:2px}
-  .tagline{font-size:13px}
+  .mark{width:64px;height:64px;border-radius:19px}
+  .mark svg{width:52px;height:52px}
+  .word{font-size:38px;margin-top:2px}
+  .tagline{font-size:15px}
   .field input{padding:9px 14px}
   .go{padding:9px 18px}
   .card{padding:12px;gap:10px;border-radius:22px}
@@ -138,8 +139,8 @@ body.choosing #card,body.choosing #hist{display:none}
   body.hascard .hist{display:none}
 }
 .fieldwrap{position:relative}
-.tip{position:fixed;top:calc(max(14px,env(safe-area-inset-top)) + 54px);left:16px;right:16px;max-width:428px;margin:0 auto;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.18);padding:14px 16px;padding-inline-end:46px}
-.tip p{margin:0;font-size:14px;line-height:1.5;color:var(--ink);text-wrap:balance}
+.tip{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:12px 14px;padding-inline-end:46px}
+.tip p{margin:0;font-size:13.5px;line-height:1.5;color:var(--ink)}
 .tipx{position:absolute;top:8px;inset-inline-end:8px;width:28px;height:28px;border-radius:50%;border:0;background:var(--bg);color:var(--muted);font:inherit;font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
 .tipx:hover{color:var(--ink)}
 .tipx:focus-visible{outline:2px solid var(--apple);outline-offset:2px}
@@ -189,12 +190,12 @@ body.choosing #card,body.choosing #hist{display:none}
   <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
 </button>
 
-<div class="tip" id="tip" role="note" hidden>
-  <p>קיבלת שיר מאפל מיוזיק ואת בספוטיפיי? או להפך? הדביקי קישור ונעזור לך למצוא אותו באפליקציה שלך.</p>
-  <button class="tipx" id="tipx" type="button" aria-label="סגירה">×</button>
-</div>
 <div class="shell">
 <main>
+  <div class="tip" id="tip" role="note" hidden>
+    <p>קיבלת שיר מאפל מיוזיק ואת בספוטיפיי? או להפך? הדביקי קישור ונעזור לך למצוא אותו באפליקציה שלך.</p>
+    <button class="tipx" id="tipx" type="button" aria-label="סגירה">×</button>
+  </div>
   <header>
     <span class="mark" aria-hidden="true">
       <svg viewBox="0 0 64 64" fill="none">
@@ -412,7 +413,7 @@ body.choosing #card,body.choosing #hist{display:none}
   }
 
   function sendToFriend(label, link){
-    var msg = "אל תהיי עצלנית, שלחתי לך שיר עם קישור גם לספוטיפיי וגם לאפל\n" + label;
+    var msg = "אל תהיי עצלנית, הנה לינק לספוטיפיי ולאפל\n" + label;
     if (navigator.share && isMobile()){
       navigator.share({ title: label, text: msg, url: link }).catch(function(){});
       return;
@@ -501,8 +502,11 @@ body.choosing #card,body.choosing #hist{display:none}
   var TIPK = "slothspot.tip";
   var tip = document.getElementById("tip");
   function tipSeen(){ try { return localStorage.getItem(TIPK) === "1"; } catch(e){ return false; } }
+  var booting = true;
+  function setTip(v){ tip.hidden = !v; document.body.classList.toggle("tipon", v); }
   function hideTip(persist){
-    tip.hidden = true;
+    if (booting) return;
+    setTip(false);
     if (persist){ try { localStorage.setItem(TIPK, "1"); } catch(e){} }
   }
   document.getElementById("tipx").addEventListener("click", function(){ hideTip(true); });
@@ -693,7 +697,8 @@ body.choosing #card,body.choosing #hist{display:none}
     first = incoming();
     if (first){ input.value = first; run(first); }
   }
-  if (!sh && !first && !tipSeen()) tip.hidden = false;
+  booting = false;
+  if (!tipSeen()) setTip(true);
 
   try { if ("serviceWorker" in navigator && realOrigin()) navigator.serviceWorker.register("sw.js").catch(function(){}); } catch(e){}
 })();
